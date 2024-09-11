@@ -8,7 +8,7 @@ num_dec_layer = 6
 loss_lambda = 2.0
 num_classes = 80
 
-image_size = (1024, 1024)
+image_size = (512, 512)
 batch_augments = [
     dict(type='BatchFixedSizePad', size=image_size, pad_mask=True)
 ]
@@ -291,7 +291,10 @@ load_pipeline = [
         recompute_bbox=True,
         allow_negative_crop=True),
     dict(type='FilterAnnotations', min_gt_bbox_wh=(1e-2, 1e-2)),
-    dict(type='RandomFlip', prob=0.5),
+    dict(type='RandomFlip', prob=0.5, direction="horizontal"),
+    dict(type='RandomFlip', prob=0.5, direction="vertical"),
+    dict(type='RandomFlip', prob=0.5, direction="diagonal"),
+    dict(type='RandomAffine', max_rotate_degree=10.0, max_translate_ratio=0.1, scaling_ratio_range=(0.5, 1.5), max_shear_degree=2.0),    
     dict(type='Pad', size=image_size, pad_val=dict(img=(114, 114, 114))),
 ]
 

@@ -90,18 +90,16 @@ backend_args = None
 
 train_pipeline = [
     dict(type='Mosaic', img_scale=img_scale, pad_val=114.0),
-    dict(
-        type='RandomAffine',
-        scaling_ratio_range=(0.1, 2),
-        # img_scale is (width, height)
-        border=(-img_scale[0] // 2, -img_scale[1] // 2)),
+    dict(type='RandomFlip', prob=0.5, direction="horizontal"),
+    dict(type='RandomFlip', prob=0.5, direction="vertical"),
+    dict(type='RandomFlip', prob=0.5, direction="diagonal"),
+    dict(type='RandomAffine', max_rotate_degree=10.0, max_translate_ratio=0.1, scaling_ratio_range=(0.5, 1.5), max_shear_degree=2.0),
     dict(
         type='MixUp',
         img_scale=img_scale,
         ratio_range=(0.8, 1.6),
         pad_val=114.0),
     dict(type='YOLOXHSVRandomAug'),
-    dict(type='RandomFlip', prob=0.5),
     # According to the official implementation, multi-scale
     # training is not considered here but in the
     # 'mmdet/models/detectors/yolox.py'.

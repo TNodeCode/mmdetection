@@ -17,7 +17,7 @@ class MOTChallengeDataset(BaseVideoDataset):
 
     METAINFO = {
         'classes':
-        ('pedestrian', 'person_on_vehicle', 'car', 'bicycle', 'motorbike',
+        ('spine', 'pedestrian', 'person_on_vehicle', 'car', 'bicycle', 'motorbike',
          'non_mot_vehicle', 'static_person', 'distractor', 'occluder',
          'occluder_on_ground', 'occluder_full', 'reflection', 'crowd')
     }

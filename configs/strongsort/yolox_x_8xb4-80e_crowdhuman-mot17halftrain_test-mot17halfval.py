@@ -23,6 +23,8 @@ train_pipeline = [
         bbox_clip_border=False),
     dict(
         type='RandomAffine',
+        max_rotate_degree=10.0,
+        max_translate_ratio=0.1,
         scaling_ratio_range=(0.1, 2),
         border=(-img_scale[0] // 2, -img_scale[1] // 2),
         bbox_clip_border=False),
@@ -33,7 +35,9 @@ train_pipeline = [
         pad_val=114.0,
         bbox_clip_border=False),
     dict(type='YOLOXHSVRandomAug'),
-    dict(type='RandomFlip', prob=0.5),
+    dict(type='RandomFlip', prob=0.5, direction="horizontal"),
+    dict(type='RandomFlip', prob=0.5, direction="vertical"),
+    dict(type='RandomFlip', prob=0.5, direction="diagonal"),
     dict(
         type='Resize',
         scale=img_scale,
@@ -72,32 +76,6 @@ train_dataloader = dict(
                     data_root=data_root,
                     ann_file='annotations/half-train_cocoformat.json',
                     data_prefix=dict(img='train'),
-                    filter_cfg=dict(filter_empty_gt=True, min_size=32),
-                    metainfo=dict(classes=('pedestrian', )),
-                    pipeline=[
-                        dict(
-                            type='LoadImageFromFile',
-                            backend_args=_base_.backend_args),
-                        dict(type='LoadAnnotations', with_bbox=True),
-                    ]),
-                dict(
-                    type='CocoDataset',
-                    data_root='data/crowdhuman',
-                    ann_file='annotations/crowdhuman_train.json',
-                    data_prefix=dict(img='train'),
-                    filter_cfg=dict(filter_empty_gt=True, min_size=32),
-                    metainfo=dict(classes=('pedestrian', )),
-                    pipeline=[
-                        dict(
-                            type='LoadImageFromFile',
-                            backend_args=_base_.backend_args),
-                        dict(type='LoadAnnotations', with_bbox=True),
-                    ]),
-                dict(
-                    type='CocoDataset',
-                    data_root='data/crowdhuman',
-                    ann_file='annotations/crowdhuman_val.json',
-                    data_prefix=dict(img='val'),
                     filter_cfg=dict(filter_empty_gt=True, min_size=32),
                     metainfo=dict(classes=('pedestrian', )),
                     pipeline=[

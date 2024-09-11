@@ -1,6 +1,7 @@
 # dataset settings
 dataset_type = 'CocoDataset'
 data_root = 'data/coco/'
+classes = ('spine')
 
 # Example to use different file client
 # Method 1: simply set the data root and let the file I/O module
@@ -16,12 +17,15 @@ data_root = 'data/coco/'
 #         'data/': 's3://openmmlab/datasets/detection/'
 #     }))
 backend_args = None
-
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', with_bbox=True),
     dict(type='Resize', scale=(1333, 800), keep_ratio=True),
-    dict(type='RandomFlip', prob=0.5),
+    dict(type='Mosaic', img_scale=(1333,800), pad_val=114.0),
+    dict(type='RandomFlip', prob=0.5, direction="horizontal"), 
+    dict(type='RandomFlip', prob=0.5, direction="vertical"),
+    dict(type='RandomFlip', prob=0.5, direction="diagonal"),
+    dict(type='RandomAffine', max_rotate_degree=10.0, max_translate_ratio=0.1, scaling_ratio_range=(0.5, 1.5), max_shear_degree=2.0),
     dict(type='PackDetInputs')
 ]
 test_pipeline = [

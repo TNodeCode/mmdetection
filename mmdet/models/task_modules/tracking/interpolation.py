@@ -164,5 +164,8 @@ class InterpolateTracklets:
 
             interpolated_tracks.append(interpolated_track)
 
+        if len(interpolated_tracks) == 0:
+            return pred_tracks
+        
         interpolated_tracks = np.concatenate(interpolated_tracks)
         return interpolated_tracks[interpolated_tracks[:, 0].argsort()]

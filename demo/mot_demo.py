@@ -53,6 +53,7 @@ def main(args):
         imgs = mmcv.VideoReader(args.inputs)
         in_video = True
 
+    print("IMAGES", imgs, args.inputs)
     # define output
     out_video = False
     if args.out is not None:
