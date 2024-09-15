@@ -2,6 +2,7 @@
 import os
 import os.path as osp
 import tempfile
+import numpy as np
 import pandas as pd
 import click
 import torch
@@ -138,60 +139,61 @@ def track(config: str, ckp_detector: str, ckp_reid: str, input_dir: str, output_
             img = mmcv.imread(img_path)
             result: TrackDataSample = inference_mot(model, img, frame_id=i, video_len=len(imgs))
 
-            # Detection results
-            if result.video_data_samples[0].pred_instances.bboxes.shape[1] == 4:
-                bboxes = result.video_data_samples[0].pred_instances.bboxes
-                labels = result.video_data_samples[0].pred_instances.labels
-                scores = result.video_data_samples[0].pred_instances.scores          
-            else:
-                raise Exception("Invalid bboxes shape")
+            if result.video_data_samples[0].pred_instances.bboxes.shape[0] > 0: # check if there are any detections
+                # Detection results
+                if result.video_data_samples[0].pred_instances.bboxes.shape[1] == 4:
+                    bboxes = result.video_data_samples[0].pred_instances.bboxes
+                    labels = result.video_data_samples[0].pred_instances.labels
+                    scores = result.video_data_samples[0].pred_instances.scores          
+                else:
+                    raise Exception("Invalid bboxes shape")
+                
+                for j, (bbox, label, score) in enumerate(zip(bboxes, labels, scores)):
+                    if bool(bbox.min().isinf()) or bool(bbox.max().isinf() or int(bbox.min()) < 0 or int(bbox.max()) > img.shape[0]):
+                        continue
+                    if type(bbox) == np.ndarray and (bool(np.isinf(bbox.min())) or bool(np.isinf(bbox.max())) or int(bbox.min()) < 0 or int(bbox.max()) > img.shape[0]):
+                        continue
+                    detections.append({
+                        'frame': i+1,
+                        'x0': int(bbox[0]),
+                        'x1': int(bbox[2]),
+                        'y0': int(bbox[1]),
+                        'y1': int(bbox[3]),
+                        'score': float(score)
+                    })
             
-            for j, (bbox, label, score) in enumerate(zip(bboxes, labels, scores)):
-                if bool(bbox.min().isinf()) or bool(bbox.max().isinf() or int(bbox.min()) < 0 or int(bbox.max()) > img.shape[0]):
-                    continue
-                detections.append({
-                    'frame': i+1,
-                    'x0': int(bbox[0]),
-                    'x1': int(bbox[2]),
-                    'y0': int(bbox[1]),
-                    'y1': int(bbox[3]),
-                    'score': float(score)
-                })
-
-            result.video_data_samples[0].pred_track_instances.bboxes = result.video_data_samples[0].pred_track_instances.bboxes
-            labels = result.video_data_samples[0].pred_track_instances.labels = result.video_data_samples[0].pred_track_instances.labels
-            result.video_data_samples[0].pred_track_instances.instances_id = result.video_data_samples[0].pred_track_instances.instances_id
-            result.video_data_samples[0].pred_track_instances.scores = result.video_data_samples[0].pred_track_instances.scores
-
-            if result.video_data_samples[0].pred_track_instances.bboxes.shape[1] == 4:
-                bboxes = result.video_data_samples[0].pred_track_instances.bboxes
-                labels = result.video_data_samples[0].pred_track_instances.labels
-                instances_ids = result.video_data_samples[0].pred_track_instances.instances_id
-                scores = result.video_data_samples[0].pred_track_instances.scores
-            elif result.video_data_samples[0].pred_track_instances.bboxes.shape[1] == 7:
-                bboxes = result.video_data_samples[0].pred_track_instances.bboxes[:, 2:6]
-                # with to x1 = x0 + width
-                bboxes[:, 2] = bboxes[:, 0] + bboxes[:, 2]
-                # height to y1 = y0 + height
-                bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
-                labels = result.video_data_samples[0].pred_track_instances.bboxes[:, 0]
-                instances_ids = result.video_data_samples[0].pred_track_instances.bboxes[:, 1]
-                scores = result.video_data_samples[0].pred_track_instances.bboxes[:, 6]            
-            else:
-                raise Exception("Invalid bboxes shape")
-            
-            for j, (bbox, label, instance_id, score) in enumerate(zip(bboxes, labels, instances_ids, scores)):
-                if bool(bbox.min().isinf()) or bool(bbox.max().isinf()) or int(bbox.min()) < 0 or int(bbox.max()) > img.shape[0]:
-                    continue
-                trajectories.append({
-                    'frame': i+1,
-                    'object_id': int(instance_id),
-                    'x0': int(bbox[0]),
-                    'x1': int(bbox[2]),
-                    'w': int(bbox[2]) - int(bbox[0]),
-                    'h': int(bbox[3]) - int(bbox[1]),
-                    'score': float(score)
-                })
+            if result.video_data_samples[0].pred_track_instances.bboxes.shape[0] > 0: # check if there are any trajectories
+                if result.video_data_samples[0].pred_track_instances.bboxes.shape[1] == 4:
+                    bboxes = result.video_data_samples[0].pred_track_instances.bboxes
+                    labels = result.video_data_samples[0].pred_track_instances.labels
+                    instances_ids = result.video_data_samples[0].pred_track_instances.instances_id
+                    scores = result.video_data_samples[0].pred_track_instances.scores
+                elif result.video_data_samples[0].pred_track_instances.bboxes.shape[1] == 7:
+                    bboxes = result.video_data_samples[0].pred_track_instances.bboxes[:, 2:6]
+                    # with to x1 = x0 + width
+                    bboxes[:, 2] = bboxes[:, 0] + bboxes[:, 2]
+                    # height to y1 = y0 + height
+                    bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
+                    labels = result.video_data_samples[0].pred_track_instances.bboxes[:, 0]
+                    instances_ids = result.video_data_samples[0].pred_track_instances.bboxes[:, 1]
+                    scores = result.video_data_samples[0].pred_track_instances.bboxes[:, 6]
+                else:
+                    raise Exception("Invalid bboxes shape")
+                
+                for j, (bbox, label, instance_id, score) in enumerate(zip(bboxes, labels, instances_ids, scores)):
+                    if type(bbox) == torch.Tensor and (bool(bbox.min().isinf()) or bool(bbox.max().isinf()) or int(bbox.min()) < 0 or int(bbox.max()) > img.shape[0]):
+                        continue
+                    if type(bbox) == np.ndarray and (bool(np.isinf(bbox.min())) or bool(np.isinf(bbox.max())) or int(bbox.min()) < 0 or int(bbox.max()) > img.shape[0]):
+                        continue
+                    trajectories.append({
+                        'frame': i+1,
+                        'object_id': int(instance_id),
+                        'x0': int(bbox[0]),
+                        'x1': int(bbox[2]),
+                        'w': int(bbox[2]) - int(bbox[0]),
+                        'h': int(bbox[3]) - int(bbox[1]),
+                        'score': float(score)
+                    })
 
             if output is not None:
                 if IN_VIDEO or OUT_VIDEO:
