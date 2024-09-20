@@ -78,10 +78,6 @@ def main():
 
     in_folder = osp.join(args.input, 'train')
     video_names = os.listdir(in_folder)
-    if 'MOT17' in in_folder:
-        video_names = [
-            video_name for video_name in video_names if 'FRCNN' in video_name
-        ]
     is_mot15 = True if 'MOT15' in in_folder else False
     for video_name in tqdm(video_names):
         # load video infos
