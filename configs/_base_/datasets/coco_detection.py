@@ -21,7 +21,6 @@ train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', with_bbox=True),
     dict(type='Resize', scale=(1333, 800), keep_ratio=True),
-    dict(type='Mosaic', img_scale=(1333,800), pad_val=114.0),
     dict(type='RandomFlip', prob=0.5, direction="horizontal"), 
     dict(type='RandomFlip', prob=0.5, direction="vertical"),
     dict(type='RandomFlip', prob=0.5, direction="diagonal"),

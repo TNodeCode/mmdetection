@@ -19,8 +19,7 @@ param_scheduler = [
 # optimizer
 optim_wrapper = dict(
     type='OptimWrapper',
-    #optimizer=dict(type='SGD', lr=0.02, momentum=0.9, weight_decay=0.0001))
-    optimizer=dict(type="AdamW", lr=6e-5, weight_decay=0.05))
+    optimizer=dict(type='SGD', lr=0.02, weight_decay=0.0001))
 # Default setting for scaling LR automatically
 #   - `enable` means enable scaling LR automatically
 #       or not by default.
