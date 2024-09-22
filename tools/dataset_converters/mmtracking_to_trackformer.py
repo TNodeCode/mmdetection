@@ -64,7 +64,7 @@ for _, video in df_videos.iterrows():
                 'iscrowd': 0,
                 'category_id': int(annotation['category_id']) + 1,
                 'seq': str(video['name']),
-                'track_id': int(np.where(unique_mot_instances==annotation['mot_instance_id'])[0][0]),
+                'track_id': annotation['mot_instance_id'],
             })
 
             next_annotation_id += 1
