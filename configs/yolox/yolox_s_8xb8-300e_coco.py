@@ -194,8 +194,7 @@ base_lr = 0.01
 optim_wrapper = dict(
     type='OptimWrapper',
     optimizer=dict(
-        type='SGD', lr=base_lr, momentum=0.9, weight_decay=5e-4,
-        nesterov=True),
+        type='SGD', lr=base_lr, weight_decay=5e-4),
     paramwise_cfg=dict(norm_decay_mult=0., bias_decay_mult=0.))
 
 # learning rate

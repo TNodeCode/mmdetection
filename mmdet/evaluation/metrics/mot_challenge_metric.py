@@ -157,7 +157,7 @@ class MOTChallengeMetric(BaseVideoMetric):
 
     def transform_gt_and_pred(self, img_data_sample, video, frame_id):
 
-        video = img_data_sample['img_path'].split(os.sep)[-3]
+        video = img_data_sample['img_path'].split('/')[-3]
         # load gts
         if 'instances' in img_data_sample:
             gt_instances = img_data_sample['instances']
@@ -201,7 +201,7 @@ class MOTChallengeMetric(BaseVideoMetric):
     def process_image(self, data_samples, video_len):
 
         img_data_sample = data_samples[0].to_dict()
-        video = img_data_sample['img_path'].split(os.sep)[-3]
+        video = img_data_sample['img_path'].split('/')[-3]
         frame_id = img_data_sample['frame_id']
         if self.seq_info[video]['seq_length'] == -1:
             self.seq_info[video]['seq_length'] = video_len
