@@ -189,7 +189,7 @@ def track(config: str, ckp_detector: str, ckp_reid: str, input_dir: str, output_
                         'frame': i+1,
                         'object_id': int(instance_id),
                         'x0': int(bbox[0]),
-                        'x1': int(bbox[2]),
+                        'x1': int(bbox[1]),
                         'w': int(bbox[2]) - int(bbox[0]),
                         'h': int(bbox[3]) - int(bbox[1]),
                         'score': float(score)
