@@ -74,11 +74,12 @@ class StrongSORTTracker(SORTTracker):
                      motion_weight=0.02),
                  match_iou_thr: float = 0.7,
                  num_tentatives: int = 2,
+                 metric='iou',
                  **kwargs):
         if motmetrics is None:
             raise RuntimeError('motmetrics is not installed,\
                  please install it by: pip install motmetrics')
-        super().__init__(motion, obj_score_thr, reid, match_iou_thr,
+        super().__init__(motion, obj_score_thr, reid, metric, match_iou_thr,
                          num_tentatives, **kwargs)
 
     def update_track(self, id: int, obj: Tuple[Tensor]) -> None:
@@ -230,7 +231,7 @@ class StrongSORTTracker(SORTTracker):
             if len(active_ids) > 0:
                 active_dets = torch.nonzero(ids == -1).squeeze(1)
                 track_bboxes = self.get('bboxes', active_ids)
-                ious = bbox_overlaps(track_bboxes, bboxes[active_dets])
+                ious = bbox_overlaps(track_bboxes, bboxes[active_dets], mode=self.metric)
 
                 # support multi-class association
                 track_labels = torch.tensor([

@@ -13,12 +13,13 @@ def cast_tensor_type(x, scale=1., dtype=None):
 
 
 @TASK_UTILS.register_module()
-class BboxOverlaps2D:
+class BboxOverlaps2D: 
     """2D Overlaps (e.g. IoUs, GIoUs) Calculator."""
 
-    def __init__(self, scale=1., dtype=None):
+    def __init__(self, scale=1., dtype=None, metric='iou'):
         self.scale = scale
         self.dtype = dtype
+        self.metric = metric
 
     def __call__(self, bboxes1, bboxes2, mode='iou', is_aligned=False):
         """Calculate IoU between 2D bboxes.
@@ -40,6 +41,8 @@ class BboxOverlaps2D:
         Returns:
             Tensor: shape (m, n) if ``is_aligned `` is False else shape (m,)
         """
+        if mode != self.metric:
+            mode = self.metric
         bboxes1 = get_box_tensor(bboxes1)
         bboxes2 = get_box_tensor(bboxes2)
         assert bboxes1.size(-1) in [0, 4, 5]

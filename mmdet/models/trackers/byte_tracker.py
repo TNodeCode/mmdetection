@@ -46,6 +46,7 @@ class ByteTracker(BaseTracker):
                  weight_iou_with_det_scores: bool = True,
                  match_iou_thrs: dict = dict(high=0.1, low=0.5, tentative=0.3),
                  num_tentatives: int = 3,
+                 metric='iou',
                  **kwargs):
         super().__init__(**kwargs)
 
@@ -62,6 +63,7 @@ class ByteTracker(BaseTracker):
         self.match_iou_thrs = match_iou_thrs
 
         self.num_tentatives = num_tentatives
+        self.metric = metric
 
     @property
     def confirmed_ids(self) -> List:
@@ -151,7 +153,7 @@ class ByteTracker(BaseTracker):
         track_bboxes = bbox_cxcyah_to_xyxy(track_bboxes)
 
         # compute distance
-        ious = bbox_overlaps(track_bboxes, det_bboxes)
+        ious = bbox_overlaps(track_bboxes, det_bboxes, mode=self.metric)
         if weight_iou_with_det_scores:
             ious *= det_scores
         # support multi-class association

@@ -51,6 +51,7 @@ class SORTTracker(BaseTracker):
                      img_scale=(256, 128),
                      img_norm_cfg=None,
                      match_score_thr=2.0),
+                 metric='iou',
                  match_iou_thr: float = 0.7,
                  num_tentatives: int = 3,
                  **kwargs):
@@ -65,6 +66,7 @@ class SORTTracker(BaseTracker):
         self.reid = reid
         self.match_iou_thr = match_iou_thr
         self.num_tentatives = num_tentatives
+        self.metric = metric
 
     @property
     def confirmed_ids(self) -> List:
@@ -226,7 +228,7 @@ class SORTTracker(BaseTracker):
             if len(active_ids) > 0:
                 active_dets = torch.nonzero(ids == -1).squeeze(1)
                 track_bboxes = self.get('bboxes', active_ids)
-                ious = bbox_overlaps(track_bboxes, bboxes[active_dets])
+                ious = bbox_overlaps(track_bboxes, bboxes[active_dets], mode=self.metric)
 
                 # support multi-class association
                 track_labels = torch.tensor([

@@ -64,6 +64,7 @@ model = dict(
         rpn=dict(
             assigner=dict(
                 type='MaxIoUAssigner',
+                iou_calculator = dict(type='BboxOverlaps2D', metric='iou'), # metric in ['iou', 'iom']
                 pos_iou_thr=0.7,
                 neg_iou_thr=0.3,
                 min_pos_iou=0.3,
@@ -86,6 +87,7 @@ model = dict(
         rcnn=dict(
             assigner=dict(
                 type='MaxIoUAssigner',
+                iou_calculator = dict(type='BboxOverlaps2D', metric='iou'), # metric in ['iou', 'iom']
                 pos_iou_thr=0.5,
                 neg_iou_thr=0.5,
                 min_pos_iou=0.5,

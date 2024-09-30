@@ -67,6 +67,7 @@ model = dict(
     tracker=dict(
         type='SORTTracker',
         motion=dict(type='KalmanFilter', center_only=False),
+        metric='iom',
         obj_score_thr=0.5,
         reid=dict(
             num_samples=10,

@@ -83,7 +83,10 @@ model = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args={{_base_.backend_args}}),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='RandomFlip', prob=0.5),
+    dict(type='RandomFlip', prob=0.5, direction="horizontal"), 
+    dict(type='RandomFlip', prob=0.5, direction="vertical"),
+    dict(type='RandomFlip', prob=0.5, direction="diagonal"),
+    dict(type='RandomAffine', max_rotate_degree=10.0, max_translate_ratio=0.1, scaling_ratio_range=(0.5, 1.5), max_shear_degree=2.0),
     dict(
         type='RandomChoice',
         transforms=[

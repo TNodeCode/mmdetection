@@ -127,7 +127,7 @@ def bbox_overlaps(bboxes1, bboxes2, mode='iou', is_aligned=False, eps=1e-6):
         >>> assert tuple(bbox_overlaps(empty, empty).shape) == (0, 0)
     """
 
-    assert mode in ['iou', 'iof', 'giou'], f'Unsupported mode {mode}'
+    assert mode in ['iou', 'iom', 'iof', 'giou'], f'Unsupported mode {mode}'
     # Either the boxes are empty or the length of boxes' last dimension is 4
     assert (bboxes1.size(-1) == 4 or bboxes1.size(0) == 0)
     assert (bboxes2.size(-1) == 4 or bboxes2.size(0) == 0)
@@ -188,8 +188,11 @@ def bbox_overlaps(bboxes1, bboxes2, mode='iou', is_aligned=False, eps=1e-6):
 
     eps = union.new_tensor([eps])
     union = torch.max(union, eps)
-    ious = overlap / union
-    if mode in ['iou', 'iof']:
+    if mode == 'iom':
+        ious = overlap / (torch.min(area1[..., None], area2[..., None, :]) + 1e-9)
+    else:
+        ious = overlap / union
+    if mode in ['iou', 'iom', 'iof']:
         return ious
     # calculate gious
     enclose_wh = fp16_clamp(enclosed_rb - enclosed_lt, min=0)

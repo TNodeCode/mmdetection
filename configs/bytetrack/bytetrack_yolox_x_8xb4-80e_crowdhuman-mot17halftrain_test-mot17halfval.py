@@ -38,6 +38,7 @@ model = dict(
     tracker=dict(
         type='ByteTracker',
         motion=dict(type='KalmanFilter'),
+        metric='iom',
         obj_score_thrs=dict(high=0.6, low=0.1),
         init_track_thr=0.7,
         weight_iou_with_det_scores=True,

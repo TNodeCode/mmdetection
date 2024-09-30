@@ -10,8 +10,10 @@ tta_pipeline = [
         transforms=[[
             dict(type='Resize', scale=s, keep_ratio=True) for s in img_scales
         ], [
-            dict(type='RandomFlip', prob=1.),
-            dict(type='RandomFlip', prob=0.)
+            dict(type='RandomFlip', prob=0.5, direction="horizontal"), 
+            dict(type='RandomFlip', prob=0.5, direction="vertical"),
+            dict(type='RandomFlip', prob=0.5, direction="diagonal"),
+            dict(type='RandomAffine', max_rotate_degree=10.0, max_translate_ratio=0.1, scaling_ratio_range=(0.5, 1.5), max_shear_degree=2.0),
         ], [dict(type='LoadAnnotations', with_bbox=True)],
                     [
                         dict(

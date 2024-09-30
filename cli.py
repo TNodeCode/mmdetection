@@ -28,17 +28,21 @@ def cli():
 @click.option('--model-type', type=str, required=True, help='Type of model to use for detection')
 @click.option('--model-name', type=str, required=True, help='Name of the model')
 @click.option('--weight-file', type=str, required=True, help='Model weight file')
+@click.option('--work-dir', type=str, required=True, help='Root path of the checkpoint files')
+@click.option('--dataset-dir', type=str, required=True, help='Root path of dataset')
 @click.option('--image-files', type=str, required=True, help='Glob path for images')
 @click.option('--results-file', type=str, required=True, help='Name of the resulting CSV file')
 @click.option('--batch-size', type=int, default=2, help='Batch size for training (greater than 0, default: 2)')
 @click.option('--score-threshold', type=float, default=0.5, help='Minimum confidence score for bounding box detection')
 @click.option('--device', type=str, default='cuda:0', help='Device to use for detection (default: cuda:0)')
-def detect(model_type, model_name, weight_file, image_files, results_file, batch_size, score_threshold, device):
+def detect(model_type, model_name, weight_file, work_dir, dataset_dir, image_files, results_file, batch_size, score_threshold, device):
     _detect(
         model_name=model_name,
         model_type=model_type,
         weight_file=weight_file,
         results_file=results_file,
+        work_dir=work_dir,
+        dataset_dir=dataset_dir,
         image_files=image_files.replace("'", ""),
         batch_size=batch_size,
         score_threshold=score_threshold,
