@@ -1,0 +1,10 @@
+cascade-rcnn-r50:
+  config: ./configs/cascade_rcnn/cascade-rcnn_r50_fpn_1x_coco.py
+  weights: ./work_dirs/cascade_rcnn/cascade-rcnn_r50_fpn_1x_coco_lr2e_4_run1/epoch_9.pth
+faster-rcnn-r50:
+  config: ./work_dirs/faster_rcnn/faster-rcnn_r50_fpn_1x_coco_lr2e-4_run3/faster-rcnn_r50_fpn_1x_coco.py
+  weights: ./work_dirs/faster_rcnn/faster-rcnn_r50_fpn_1x_coco_lr2e-4_run3/epoch_9.pth
+deepsort:
+  config: ./configs/deepsort/deepsort_faster-rcnn_r50_fpn_8xb2-4e_mot17halftrain_test-mot17halfval.py
+  detector_weights: ./work_dirs/faster_rcnn/faster-rcnn_r50_fpn_1x_coco_mot_all_adamw_run3/epoch_8.pth
+  reid_weights: ./work_dirs/reid/reid_mot_all/epoch_1.pth
