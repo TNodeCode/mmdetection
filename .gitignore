@@ -7,7 +7,6 @@ __pycache__/
 *.so
 
 # Custom files
-*.sh
 *.mp4
 detections/
 
