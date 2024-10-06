@@ -22,3 +22,6 @@ COPY ./ ./
 RUN python -m pip install -v -e .
 RUN python -m pip install -v -e . -r requirements/tracking.txt
 RUN python -m pip install globox lap git+https://github.com/tnodecode/spineui#egg=trackeval&subdirectory=repositories/trackeval
+
+# Command to run the app
+CMD uvicorn api:app --host 0.0.0.0 --port 80

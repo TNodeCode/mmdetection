@@ -9,7 +9,7 @@ on:
 env:
   DOCKERHUB_USERNAME: tnodecode
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-  IMAGE_NAME: spine-mmdetection
+  IMAGE_NAME: spine-mmdetection:light
 
 jobs:
   build-and-publish:
@@ -32,7 +32,7 @@ jobs:
       - name: Build and push Docker image for Linux x86 and Linux AARCH64
         run: |
           docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$IMAGE_NAME:latest --push .
+          docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$IMAGE_NAME --push .
 
       - name: Logout from Docker Hub
         run: docker logout
