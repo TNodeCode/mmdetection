@@ -1,0 +1,1 @@
+docker build -f spine-full.dockerfile -t tnodecode/spine-mmdetection:full .

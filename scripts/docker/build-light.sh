@@ -1,0 +1,1 @@
+docker build -f spine-light.dockerfile -t tnodecode/spine-mmdetection:light .

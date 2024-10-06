@@ -1,0 +1,1 @@
+docker push tnodecode/spine-mmdetection:full
